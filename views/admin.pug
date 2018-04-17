@@ -1,0 +1,9 @@
+extends layouts/base.pug
+
+block content
+  form(method="post", action="/credentials")
+    label(for="client_id") Client ID
+    input(type="text", name="client_id", value=(client_id || ''))
+    label(for="client_secret") Client Secret
+    input(type="text", name="client_secret", value=(client_secret || ''))
+    input(type="submit" value="Generate Credentials")

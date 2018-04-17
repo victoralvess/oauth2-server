@@ -1,0 +1,9 @@
+extends layouts/base.pug
+
+block content
+  form(method="post", action="/register")
+    label(for="username") Username
+    input(type="text", name="username")
+    label(for="password") Password
+    input(type="password", name="password")
+    input(type="submit" value="Sign Up")
