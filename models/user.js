@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const schema = new Schema({
-  username: String,
-  password: String
+  username: { type: String, required: true },
+  password: { type: String, required: true }
 });
 
 schema.method({
