@@ -2,8 +2,7 @@ const oauth2orize = require('oauth2orize');
 const uid = require('uid2');
 const _ = require('lodash');
 
-const Client = require('../models/client');
-const AccessToken = require('../models/access-token');
+const { Client, AccessToken } = require('../models');
 
 const server = oauth2orize.createServer();
 

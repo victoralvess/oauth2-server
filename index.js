@@ -4,11 +4,12 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const {ensureLoggedIn, ensureLoggedOut} = require('connect-ensure-login');
+const uid = require('uid2');
 
 const oauth2 = require('./oauth2'); // Server
 const passportConfig = require('./config/passport');
 
-const { Client, User } = require('./models');
+const {Client, User} = require('./models');
 
 mongoose.connect('mongodb://localhost:27017/aaa');
 
@@ -41,7 +42,7 @@ app.get('/register', ensureLoggedOut('/admin'), (req, res) => {
 app.post('/register', ensureLoggedOut('/admin'), (req, res) => {
   new User({
     username: req.body.username,
-    password: req.body.password
+    password: req.body.password,
   })
     .save()
     .then(() => {
@@ -53,7 +54,7 @@ app.post('/register', ensureLoggedOut('/admin'), (req, res) => {
       console.log(error);
       res.render('register', {
         user: req.user,
-        error
+        error,
       });
     });
 });
@@ -92,17 +93,17 @@ app.get('/admin', ensureLoggedIn('/login'), (req, res) => {
 
 app.post('/credentials', ensureLoggedIn('/login'), (req, res) => {
   Client.findOne({user_id: req.user.id}).then(client => {
-    if (!client) {
-      new Client({
-        client_id: 'client',
-        client_secret: 'secret',
-        user_id: req.user.id,
-      })
-        .save()
-        .then(() => res.redirect('admin'));
-    } else {
-      res.redirect('admin');
+    if (client) {
+      client.remove();
     }
+
+    new Client({
+      client_id: uid(32),
+      client_secret: uid(16),
+      user_id: req.user.id,
+    })
+      .save()
+      .then(() => res.redirect('admin'));
   });
 });
 
