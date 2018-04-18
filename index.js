@@ -8,7 +8,7 @@ const {ensureLoggedIn, ensureLoggedOut} = require('connect-ensure-login');
 const oauth2 = require('./oauth2'); // Server
 const passportConfig = require('./config/passport');
 
-const Client = require('./models/client');
+const { Client, User } = require('./models');
 
 mongoose.connect('mongodb://localhost:27017/aaa');
 
@@ -39,7 +39,23 @@ app.get('/register', ensureLoggedOut('/admin'), (req, res) => {
 });
 
 app.post('/register', ensureLoggedOut('/admin'), (req, res) => {
-  res.send('Not implemented');
+  new User({
+    username: req.body.username,
+    password: req.body.password
+  })
+    .save()
+    .then(() => {
+      passport.authenticate('local')(req, res, () => {
+        res.redirect('/admin');
+      });
+    })
+    .catch(error => {
+      console.log(error);
+      res.render('register', {
+        user: req.user,
+        error
+      });
+    });
 });
 
 app.get('/login', ensureLoggedOut('/admin'), (req, res) => {
@@ -83,13 +99,7 @@ app.post('/credentials', ensureLoggedIn('/login'), (req, res) => {
         user_id: req.user.id,
       })
         .save()
-        .then(client => {
-          /*res.render('admin', {
-          client_id: client.client_id,
-          client_secret: client.client_secret,
-        })*/
-          res.redirect('admin');
-        });
+        .then(() => res.redirect('admin'));
     } else {
       res.redirect('admin');
     }
