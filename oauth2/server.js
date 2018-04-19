@@ -3,6 +3,7 @@ const uid = require('uid2');
 const _ = require('lodash');
 
 const { Client, AccessToken } = require('../models');
+const utils = require('./utils');
 
 const server = oauth2orize.createServer();
 
@@ -26,9 +27,9 @@ server.exchange(oauth2orize.exchange.clientCredentials((client, scope, done) => 
 			if (!validateScope(scope, localClient.scope)) return done(null, false);
 
 			new AccessToken({
-				access_token: uid(256),
+				access_token: utils.generateAccessToken({ expiresIn: '30m', sub: client.client_id, scope: scope }),
 				client_id: client.client_id,
-				expires_in: 3600,
+        expires_in: 30 * 60, // 30 min
 				scope: scope
 			})
 				.save()

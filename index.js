@@ -107,7 +107,7 @@ app.post('/credentials', ensureLoggedIn('/login'), (req, res) => {
   });
 });
 
-app.get('/oauth2/token', oauth2.token);
+app.post('/oauth2/token', oauth2.token);
 
 app.get('/hello', (req, res) => {
   res.send("It's working!\n");
