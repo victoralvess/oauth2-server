@@ -7,6 +7,7 @@ const {ensureLoggedIn, ensureLoggedOut} = require('connect-ensure-login');
 const uid = require('uid2');
 
 const oauth2 = require('./oauth2'); // Server
+const utils = require('./oauth2/utils');
 const passportConfig = require('./config/passport');
 
 const {Client, User} = require('./models');
@@ -107,7 +108,11 @@ app.post('/credentials', ensureLoggedIn('/login'), (req, res) => {
   });
 });
 
-app.get('/oauth2/token', oauth2.token);
+app.post('/oauth2/token', oauth2.token);
+
+app.get('/testing/protected', utils.verifyToken, (req, res) => {
+  res.send('Protected Resource.');
+});
 
 app.get('/hello', (req, res) => {
   res.send("It's working!\n");
