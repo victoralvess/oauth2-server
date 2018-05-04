@@ -6,8 +6,8 @@ const schema = new Schema({
   password: { type: String, required: true }
 });
 
-schema.method({
-  verifyPassword: async (password) => {
+schema.loadClass(class {
+  verifyPassword(password) {
     return (this.password === password);
   }
 });
